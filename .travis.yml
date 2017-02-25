@@ -1,0 +1,45 @@
+language: java
+branches:
+  only:
+    - master
+notifications:
+  email:
+    - bhandar.anuj@gmail.com
+jdk:
+  - oraclejdk8
+sudo: false
+install: true
+script: mvn clean install
+
+before_deploy:
+  - zip -r tus-server.zip tus_servlet || true
+  - mkdir -p "dpl_cd_upload"
+  - mv spring17-API-Server.zip dpl_cd_upload/tus-server.zip || true
+
+deploy:
+  - provider: s3
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    local_dir: dpl_cd_upload
+    bucket: hackillinois-data-storage-bucket
+    region: us-east-2
+    skip_cleanup: true
+    acl: public_read
+    detect_encoding: true
+    on:
+      repo: airavata-courses/hackillinois-dataStorage
+      all_branches: true
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: spring17-api-gateway-travis-ci
+    key: spring17-API-Server.zip
+    bundle_type: zip
+    application: hackillinois-data-storage-deployment
+    deployment_group: production
+    region: us-east-2
+    on:
+      repo: airavata-courses/hackillinois-dataStorage
+      all_branches: true
+after_deploy:
+- echo "Performing after deploy procedures..."

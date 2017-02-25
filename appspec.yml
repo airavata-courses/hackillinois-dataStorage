@@ -1,0 +1,12 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ec2-user/data-storage-deployment/hackillinois-dataStorage
+hooks:
+  BeforeInstall:
+    - location: build-scripts/codeDeployBeforeInstall.sh
+  AfterInstall:
+    - location: build-scripts/codeDeployInstall.sh
+      timeout: 300
+runas: root
