@@ -39,7 +39,7 @@ deploy:
     key: spring17-API-Server.zip
     bundle_type: zip
     application: hackillinois-data-storage-deployment
-    deployment_group: production
+    deployment_group: testing
     region: us-east-2
     on:
       repo: airavata-courses/hackillinois-dataStorage
